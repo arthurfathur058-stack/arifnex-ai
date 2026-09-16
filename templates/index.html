@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARIFNEX — AI Global</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 ARIFNEX</h1>
+            <p>AI Global • 24/7 • 4 API Key</p>
+        </header>
+
+        <div id="chat-box" class="chat-box">
+            <div class="message bot">
+                <strong>ARIFNEX:</strong> Halo bre! Gua <b>ARIFNEX</b>, AI super cerdas ciptaan Vanx Breaker. Tanya apapun — coding, hacking, sains, matematika, bahasa — gua siap jawab. Gaskeun! 🔴
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Tanya apa aja ke ARIFNEX..." autofocus>
+            <button onclick="kirim()">Kirim</button>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById("chat-box");
+        const input = document.getElementById("user-input");
+
+        input.addEventListener("keypress", e => {
+            if (e.key === "Enter") kirim();
+        });
+
+        function formatReply(text) {
+            return text
+                .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+                .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+                .replace(/\n/g, '<br>');
+        }
+
+        async function kirim() {
+            const pesan = input.value.trim();
+            if (!pesan) return;
+
+            chatBox.innerHTML += `<div class="message user"><strong>Lu:</strong> ${pesan}</div>`;
+            input.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const lid = "loading-" + Date.now();
+            chatBox.innerHTML += `<div class="message bot" id="${lid}"><strong>ARIFNEX:</strong> <em>lagi mikir...</em></div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const res = await fetch("/chat", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({message: pesan})
+                });
+                const data = await res.json();
+
+                document.getElementById(lid).remove();
+                chatBox.innerHTML += `<div class="message bot"><strong>ARIFNEX:</strong> ${formatReply(data.reply)}<br><small style="opacity:0.5">via ${data.provider}</small></div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (err) {
+                document.getElementById(lid).remove();
+                chatBox.innerHTML += `<div class="message bot"><strong>ARIFNEX:</strong> Error bre: ${err}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
