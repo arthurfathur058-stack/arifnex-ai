@@ -3,7 +3,7 @@ import os
 API_KEYS = [
     {"provider": "groq", "key": os.environ.get("GROQ_KEY", ""),
      "url": "https://api.groq.com/openai/v1/chat/completions",
-     "model": "llama3-70b-8192", "priority": 1,
+     "model": "llama-3.3-70b-versatile", "priority": 1,
      "cooldown": 0, "uses": 0, "errors": 0},
     
     {"provider": "gemini", "key": os.environ.get("GEMINI_KEY", ""),
